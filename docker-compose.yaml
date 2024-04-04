@@ -15,11 +15,10 @@ services:
 
   node:
     build: .
-    command: "npm run start"
-    restart: always
+    volumes:
+      - ./app:/home/node/app/app
     working_dir: /home/node/app
-    environment:
-      - NODE_ENV=production
+    command: "npm run start"
     expose:
       - "3000"
     ports:
