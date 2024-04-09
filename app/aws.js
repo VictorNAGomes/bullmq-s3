@@ -1,4 +1,4 @@
-const AWS = require("aws-sdk");
+import AWS from "aws-sdk";
 
 const credentials = {
   accessKeyId: "na",
@@ -9,7 +9,7 @@ const bucketName = "post-images";
 
 const s3client = new AWS.S3({
   credentials,
-  endpoint: "http://localhost:4572",
+  endpoint: "http://localhost:4566",
 });
 
 const uploadFile = async (data, name) =>
@@ -27,4 +27,4 @@ const uploadFile = async (data, name) =>
     );
   });
 
-module.exports = uploadFile;
+export default uploadFile;

@@ -3,6 +3,7 @@ import multer from "multer";
 const port = process.env.PORT || 3000;
 import { Queue, Worker } from "bullmq";
 export const redisOptions = { host: "redis", port: 6379 };
+import uploadFile from "./aws.js";
 
 const app = express();
 const upload = multer({ dest: "uploads/" });
@@ -37,6 +38,7 @@ const worker = new Worker(
   "myQueue",
   async (job) => {
     console.log("executando");
+    await uploadFile(job.data.filePath, job.originalname);
     return job;
   },
   { connection: redisOptions }
