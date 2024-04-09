@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
 const port = process.env.PORT || 3000;
-import { Queue } from "bullmq";
+import { Queue, Worker } from "bullmq";
 export const redisOptions = { host: "redis", port: 6379 };
 
 const app = express();
@@ -18,10 +18,26 @@ app.get("/", async (req, res) => {
 });
 
 app.post("/upload", upload.single("file"), async (req, res) => {
-  // myQueue.add("test", { ...req.body });
-  // res.json("Adicionado na fila");
+  const { file } = req;
+
+  if (!file) {
+    return res.status(400).send("Nenhum arquivo enviado.");
+  }
+
+  myQueue.add("upload", {
+    filename: file.originalname,
+    filePath: file.path,
+    bucketName: "post-images",
+  });
+
+  res.json("Arquivo adicionado na fila");
 });
 
-// const worker = new Worker("Queue", async (job) => {
-//   return "processando";
-// });
+const worker = new Worker(
+  "myQueue",
+  async (job) => {
+    console.log("executando");
+    return job;
+  },
+  { connection: redisOptions }
+);
